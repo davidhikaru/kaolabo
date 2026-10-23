@@ -1,35 +1,43 @@
-export async function setupCamera(videoEl, canvasEl) {
+// js/modules/camera.js
+
+export async function setupCamera(videoElement, canvasElement) {
   try {
-    // 要求使用前鏡頭
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'user', width: 320, height: 320 },
       audio: false
     });
     
-    videoEl.srcObject = stream;
+    videoElement.srcObject = stream;
     
-    // 把影片畫面繪製到 Canvas 上
-    const ctx = canvasEl.getContext('2d');
-    function render() {
-      if (videoEl.readyState === videoEl.HAVE_ENOUGH_DATA) {
-        ctx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-      }
-      requestAnimationFrame(render);
-    }
-    render();
-    return true;
+    // 等待攝影機準備完畢
+    return new Promise((resolve) => {
+      videoElement.onloadedmetadata = () => {
+        videoElement.play();
+        
+        // 啟動畫布渲染循環，將隱藏的 video 畫面持續畫到 canvas 上
+        const ctx = canvasElement.getContext('2d');
+        const drawLoop = () => {
+          if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+            ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+          }
+          requestAnimationFrame(drawLoop);
+        };
+        drawLoop();
+        
+        resolve(true);
+      };
+    });
   } catch (err) {
-    console.error("Camera access error:", err);
-    alert("カメラのアクセスが拒否されたか、利用できません。(請允許相機權限)");
+    console.error("相機啟動失敗:", err);
+    alert("カメラのアクセスが許可されていないか、他のアプリで使用中です。");
     return false;
   }
 }
 
-// 將 Canvas 畫面的瞬間截圖轉為 Blob 檔案 (準備上傳用)
-export function captureCanvasBlob(canvasEl) {
+export async function captureCanvasBlob(canvasElement) {
   return new Promise((resolve) => {
-    canvasEl.toBlob((blob) => {
+    canvasElement.toBlob((blob) => {
       resolve(blob);
-    }, 'image/jpeg', 0.85); // 存為 85% 品質的 JPEG
+    }, 'image/jpeg', 0.9);
   });
 }
