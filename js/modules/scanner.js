@@ -61,4 +61,4 @@ export async function runAnalysis(scanOverlay, scanInstruction, scanProgress, fl
 
   scanOverlay.classList.add('hidden');
   callback({ score, comment }, capturedPhotos);
-}]
+}
