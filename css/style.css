@@ -198,3 +198,93 @@ button:disabled {
   font-weight: bold;
   margin-bottom: 16px;
 }
+
+/* =========================================
+   新增：多角度掃描遮罩與進度條樣式
+========================================= */
+.scan-overlay {
+  position: absolute;
+  top: 0; left: 0; 
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.55); /* 半透明黑底，讓字體與進度條跳出來 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 20px;
+}
+
+.scan-text-box {
+  background: #ffffff;
+  padding: 12px 20px;
+  border-radius: 30px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  animation: pulse 1s infinite alternate; /* 動態呼吸效果 */
+}
+
+#scan-instruction {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #2d8b5f;
+  margin: 0;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+/* 進度條外框與填充 */
+.progress-container {
+  width: 90%;
+  height: 14px;
+  background: #555555;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.progress-fill {
+  height: 100%;
+  background: #c8a346; /* 日系金黃色 */
+  width: 0%;
+  transition: width 0.3s ease-out; /* 讓進度條跑起來很滑順 */
+}
+
+/* =========================================
+   新增：結算畫面與分享按鈕樣式
+========================================= */
+.result-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* 獨立結算卡片改為滿版，移除邊框看起來更像一整個新頁面 */
+.result-card {
+  margin-top: 0;
+  background: #fdfdf9;
+  border: none;
+  padding: 20px 0;
+}
+
+/* 社群分享按鈕 (推特/FB 藍色系) */
+.btn-blue {
+  background-color: #1d9bf0;
+  color: #ffffff;
+  box-shadow: 0 4px 0 #0c7abf;
+}
+
+.btn-blue:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #0c7abf;
+}
+
+/* 強制隱藏工具 Class */
+.hidden {
+  display: none !important;
+}
