@@ -1,50 +1,55 @@
+// js/modules/supabase.js
 import { SUPABASE_CONFIG } from '../config.js';
 
 // 初始化 Supabase Client
-const supabase = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+const supabase = window.supabase.createClient(
+  SUPABASE_CONFIG.url,
+  SUPABASE_CONFIG.anonKey
+);
 
-/**
- * 將圖片 Blob 上傳至 Supabase Storage 並寫入 Database
- * @param {Blob} imageBlob 
- * @param {string|number} score 
- */
 export async function saveTestRecord(imageBlob, score) {
   try {
-    // 產生一個不重複的隨機檔名
-    const fileName = `photo_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.jpg`;
+    // 1. 生成安全無特化字元的檔名 (例如 photo_1729668900000.jpg)
+    const fileName = `photo_${Date.now()}.jpg`;
 
-    // 1. 上傳到名為 'user-photos' 的 Storage Bucket
+    // 2. 上傳圖片至 Supabase Storage
     const { data: storageData, error: storageError } = await supabase.storage
       .from('user-photos')
       .upload(fileName, imageBlob, {
-        contentType: 'image/jpeg'
+        contentType: 'image/jpeg',
+        upsert: false
       });
 
-    if (storageError) throw storageError;
+    if (storageError) {
+      console.error('Storage 上傳失敗:', storageError.message);
+      return;
+    }
 
-    // 2. 取得圖片的公開網址 (Public URL)
+    // 3. 取得圖片公開 URL
     const { data: urlData } = supabase.storage
       .from('user-photos')
       .getPublicUrl(fileName);
 
-    const publicUrl = urlData.publicUrl;
+    const imageUrl = urlData.publicUrl;
 
-    // 3. 將網址與分數寫入 Database 的 'test_results' 資料表
+    // 4. 將分數與圖片網址寫入 Database test_result 資料表
     const { data: dbData, error: dbError } = await supabase
-      .from('test_results')
+      .from('test_result')
       .insert([
-        { 
-          photo_url: publicUrl, 
-          score: parseFloat(score)
+        {
+          score: score,
+          image_url: imageUrl
         }
       ]);
 
-    if (dbError) throw dbError;
+    if (dbError) {
+      console.error('Database 寫入失敗:', dbError.message);
+      return;
+    }
 
-    console.log("Supabase 保存成功！", publicUrl);
-    return publicUrl;
-  } catch (error) {
-    console.error("Supabase 保存失敗:", error.message);
-    return null;
+    console.log('🎉 成功上傳照片並記錄分數至 Supabase！', { imageUrl, score });
+
+  } catch (err) {
+    console.error('Supabase 保存失敗:', err);
   }
 }
