@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="css/style.css">
+  <!-- 引入 Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -39,7 +40,10 @@
           <video id="webcam" autoplay playsinline muted hidden></video>
           <canvas id="preview-canvas" width="320" height="320"></canvas>
           
-          <!-- 新增：多角度掃描引導與進度條 -->
+          <!-- 拍照閃光特效層 -->
+          <div id="flash-screen" class="flash-effect hidden"></div>
+          
+          <!-- 多角度掃描引導與進度條 -->
           <div id="scan-overlay" class="scan-overlay hidden">
             <div class="scan-text-box">
               <p id="scan-instruction">正面の顔をスキャン中...</p>
@@ -56,7 +60,7 @@
         </div>
       </div>
 
-      <!-- 🏆 新增：獨立結算區塊 (初始隱藏) -->
+      <!-- 🏆 獨立結算區塊 -->
       <div id="result-section" class="result-card hidden">
         <div class="stamp-badge" id="result-stamp">🎉 診断結果 🎉</div>
         <div class="score-display">
