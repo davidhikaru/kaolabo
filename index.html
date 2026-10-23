@@ -2,68 +2,87 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- 確保在手機上瀏覽時比例正確 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>カオラボ (KaoLabo) - AI顔診断</title>
   
-  <!-- 載入 CSS 樣式 (我們下一步會寫) -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
   
-  <!-- 載入 Supabase JS SDK (讓前端能跟資料庫溝通) -->
+  <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
   <div class="app-container">
-    <!-- 標題區塊 -->
-    <header>
-      <h1>✨ カオラボ ✨</h1>
-      <p class="subtitle">AIがあなたのビジュアルスコアを測定します！</p>
-    </header>
 
-    <!-- 步驟 1: 同意規約的彈跳視窗 (預設顯示) -->
-    <div id="consent-modal" class="modal">
-      <div class="modal-content">
-        <h2>利用規約とプライバシー</h2>
-        <div class="terms-body">
-          <p>本アプリでは、顔のバランス分析のため、カメラ機能を使用します。</p>
-          <p>※分析精度向上およびサービス運営のため、撮影された画像はサーバーに安全に送信・保存されます。同意いただける場合のみご利用ください。</p>
-        </div>
-        <button id="btn-agree" class="btn-primary">同意して始める</button>
+    <!-- 規約彈窗 -->
+    <div id="consent-modal" class="modal-overlay">
+      <div class="game-card modal-card">
+        <h2 class="card-title">AI黄金比顔タイプ診断</h2>
+        <p class="card-desc">
+          カメラで顔のバランスを分析し、あなたのビジュアルスコアを測定するゲームです。
+        </p>
+
+        <ul class="rule-list">
+          <li><span class="badge">1</span><div class="rule-text">「カメラ起動」を押して、お顔をカメラの正面に向けてください。</div></li>
+          <li><span class="badge">2</span><div class="rule-text">「診断スタート！」を押すと、AIが黄金比をスキャンします。</div></li>
+          <li><span class="badge">3</span><div class="rule-text">分析精度向上のため撮影画像はサーバーに保存されます。同意の上お楽しみください。</div></li>
+        </ul>
+
+        <button id="btn-agree" class="btn btn-green btn-block">スタート</button>
       </div>
     </div>
 
-    <!-- 步驟 2: 主畫面 (相機與操作區) -->
-    <main class="main-content">
-      <div class="camera-wrapper">
-        <!-- 隱藏的 video 標籤，用來接收相機畫面 -->
-        <video id="webcam" autoplay playsinline muted hidden></video>
-        <!-- 實際顯示給使用者看並用來截圖的畫布 -->
-        <canvas id="preview-canvas" width="320" height="320"></canvas>
-        <!-- 掃描特效線 (一開始隱藏) -->
-        <div id="scan-line" class="scan-line hidden"></div>
-      </div>
+    <!-- 主遊戲卡片 -->
+    <main class="game-card">
+      <h1 class="card-title">✨ カオラボ ✨</h1>
+      <p class="card-subtitle">AIビジュアル測定</p>
 
-      <div class="controls">
-        <button id="btn-start-camera" class="btn-secondary">カメラを起動</button>
-        <!-- 預設為不可點擊 (disabled)，等相機啟動後才開啟 -->
-        <button id="btn-scan" class="btn-accent" disabled>診断スタート！</button>
-      </div>
-
-      <!-- 步驟 3: 診斷結果區塊 (一開始隱藏) -->
-      <div id="result-area" class="result-card hidden">
-        <h2>🎉 診断結果 🎉</h2>
-        <div class="score-box">
-          <span class="score-label">スコア:</span>
-          <span id="score-number" class="score-val">0</span> <span class="unit">点</span>
+      <!-- 📸 診斷與相機區塊 -->
+      <div id="camera-section">
+        <div class="camera-wrapper">
+          <video id="webcam" autoplay playsinline muted hidden></video>
+          <canvas id="preview-canvas" width="320" height="320"></canvas>
+          <div id="scan-line" class="scan-line hidden"></div>
+          
+          <!-- 新增：多角度掃描引導與進度條 -->
+          <div id="scan-overlay" class="scan-overlay hidden">
+            <div class="scan-text-box">
+              <p id="scan-instruction">正面の顔をスキャン中...</p>
+            </div>
+            <div class="progress-container">
+              <div id="scan-progress" class="progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
         </div>
-        <p id="result-comment" class="comment">結果を分析中です...</p>
-        <button id="btn-retry" class="btn-secondary">もう一度診断する</button>
+
+        <div class="controls">
+          <button id="btn-start-camera" class="btn btn-secondary">カメラを起動</button>
+          <button id="btn-scan" class="btn btn-green btn-block" disabled>診断スタート！</button>
+        </div>
       </div>
+
+      <!-- 🏆 新增：獨立結算區塊 (初始隱藏) -->
+      <div id="result-section" class="result-card hidden">
+        <div class="stamp-badge" id="result-stamp">すごすぎる！！</div>
+        <div class="score-display">
+          <span class="label">スコア</span>
+          <span id="score-number" class="score-val">0</span>
+          <span class="unit">点</span>
+        </div>
+        <p id="result-comment" class="comment">分析中...</p>
+        
+        <div class="result-controls">
+          <!-- 新增：分享按鈕 (使用活潑的藍色) -->
+          <button id="btn-share" class="btn btn-blue btn-block">結果をシェアする</button>
+          <button id="btn-retry" class="btn btn-secondary btn-block">もう一度診断する</button>
+        </div>
+      </div>
+
     </main>
   </div>
 
-  <!-- 載入主控 JavaScript (必須加上 type="module" 才能使用外掛拆開的寫法) -->
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
