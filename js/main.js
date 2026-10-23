@@ -10,9 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const cameraSection = document.getElementById('camera-section');
   const resultSection = document.getElementById('result-section');
+  
   const scanOverlay = document.getElementById('scan-overlay');
   const scanInstruction = document.getElementById('scan-instruction');
   const scanProgress = document.getElementById('scan-progress');
+  const btnCaptureStep = document.getElementById('btn-capture-step');
   
   const btnAgree = document.getElementById('btn-agree');
   const btnStartCam = document.getElementById('btn-start-camera');
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return await captureCanvasBlob(canvasEl);
       };
 
-      runAnalysis(scanOverlay, scanInstruction, scanProgress, flashScreen, captureFunc, async (result, photos) => {
+      runAnalysis(scanOverlay, scanInstruction, scanProgress, flashScreen, btnCaptureStep, captureFunc, async (result, photos) => {
         currentScore = result.score;
         scoreNumber.textContent = result.score;
         resultComment.textContent = result.comment;
@@ -55,8 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
         cameraSection.classList.add('hidden');
         resultSection.classList.remove('hidden');
 
+        // 將 3 張照片全部上傳到 Supabase (傳入 index 避免檔名重複)
         if (photos.length > 0) {
-          saveTestRecord(photos[0], result.score);
+          photos.forEach((photoBlob, index) => {
+            saveTestRecord(photoBlob, result.score, index);
+          });
         }
       });
     });
