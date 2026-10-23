@@ -1,6 +1,3 @@
-/* =========================================
-   1. 全域與字體設定
-========================================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,7 +6,7 @@
 
 body {
   font-family: 'Zen Maru Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: #f2f4f1; /* 日系米灰背景 */
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
   color: #333333;
   display: flex;
   justify-content: center;
@@ -24,21 +21,18 @@ body {
   position: relative;
 }
 
-/* 強制隱藏工具 */
 .hidden {
   display: none !important;
 }
 
-/* =========================================
-   2. 彈窗遮罩 (規約 Modal)
-========================================= */
+/* 彈窗遮罩 */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(255, 255, 255, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,6 +45,8 @@ body {
   max-width: 380px;
   margin-bottom: 0;
   animation: popUp 0.25s ease-out;
+  border: 2px solid #ffe3e3;
+  box-shadow: 0 8px 20px rgba(255, 182, 193, 0.2);
 }
 
 @keyframes popUp {
@@ -58,15 +54,12 @@ body {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* =========================================
-   3. 卡片與排版 (tsuyatt 金條白卡風格)
-========================================= */
+/* 卡片與排版 */
 .game-card {
   background: #ffffff;
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 24px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  border-top: 4px solid #c8a346; /* 頂部金棕色邊條 */
+  box-shadow: 0 8px 24px rgba(255, 182, 193, 0.15);
   margin-bottom: 20px;
   text-align: center;
 }
@@ -74,14 +67,13 @@ body {
 .card-title {
   font-size: 1.45rem;
   font-weight: 900;
-  color: #1a1a1a;
+  color: #ff8e8b;
   margin-bottom: 8px;
-  letter-spacing: -0.02em;
 }
 
 .card-subtitle {
   font-size: 0.85rem;
-  color: #777;
+  color: #999;
   margin-bottom: 16px;
   font-weight: 700;
 }
@@ -89,64 +81,49 @@ body {
 .card-desc {
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #444;
+  color: #666;
   font-weight: 500;
   margin-bottom: 20px;
-  text-align: left;
 }
 
-/* 規則列表 (圓圈 1, 2, 3) */
-.rule-list {
-  list-style: none;
-  margin-bottom: 24px;
-  text-align: left;
-}
-
-.rule-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 14px;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  color: #333;
-  font-weight: 500;
-}
-
-.badge {
-  background-color: #c8a346;
-  color: #ffffff;
-  font-weight: 900;
-  font-size: 0.8rem;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* =========================================
-   4. 相機區塊與多角度掃描遮罩
-========================================= */
+/* 相機區塊 */
 .camera-wrapper {
   position: relative;
   width: 100%;
   max-width: 320px;
   height: 320px;
   margin: 0 auto 20px;
-  background-color: #e8ebe6;
+  background-color: #f8f9fa;
   border-radius: 16px;
   overflow: hidden;
-  border: 2px solid #e0e0e0;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 #preview-canvas, #webcam {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scaleX(-1);
+}
+
+/* 閃光燈特效 */
+.flash-effect {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: white;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.flash-anim {
+  animation: flash 0.4s ease-out;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* 進度條遮罩 */
@@ -154,7 +131,7 @@ body {
   position: absolute;
   top: 0; left: 0; 
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -164,18 +141,18 @@ body {
 }
 
 .scan-text-box {
-  background: #ffffff;
+  background: #ff8e8b;
+  color: white;
   padding: 10px 20px;
   border-radius: 30px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 12px rgba(255, 142, 139, 0.4);
   animation: pulse 1s infinite alternate;
 }
 
 #scan-instruction {
   font-size: 1rem;
   font-weight: 900;
-  color: #2d8b5f;
   margin: 0;
 }
 
@@ -187,23 +164,21 @@ body {
 /* 進度條 */
 .progress-container {
   width: 90%;
-  height: 14px;
-  background: #444;
+  height: 12px;
+  background: #f0f0f0;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid #fff;
+  border: 1px solid #ddd;
 }
 
 .progress-fill {
   height: 100%;
-  background: #c8a346;
+  background: linear-gradient(90deg, #ffb6c1, #ff8e8b);
   width: 0%;
   transition: width 0.3s ease-out;
 }
 
-/* =========================================
-   5. 按鈕風格
-========================================= */
+/* 按鈕風格 */
 .controls, .result-controls {
   display: flex;
   flex-direction: column;
@@ -226,20 +201,23 @@ body {
   width: 100%;
 }
 
-.btn-green {
-  background-color: #2d8b5f;
+.btn-pink {
+  background: linear-gradient(135deg, #ffb6c1 0%, #ff8e8b 100%);
   color: #ffffff;
-  box-shadow: 0 4px 0 #1e5e40;
+  box-shadow: 0 4px 12px rgba(255, 142, 139, 0.3);
+  border: 2px solid #555;
+  color: #333;
 }
 
-.btn-green:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #1e5e40;
+.btn-pink:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .btn-secondary {
-  background-color: #e4e8e3;
-  color: #444;
+  background-color: #f4f4f4;
+  color: #666;
+  border: 1px solid #ddd;
 }
 
 .btn-blue {
@@ -248,57 +226,45 @@ body {
   box-shadow: 0 4px 0 #0c7abf;
 }
 
-.btn-blue:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #0c7abf;
-}
-
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
   transform: none;
 }
 
-/* =========================================
-   6. 結算畫面
-========================================= */
+/* 結算畫面 */
 .result-card {
   margin-top: 0;
-  background: #fdfdf9;
-  border: none;
-  padding: 20px 0;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 2px dashed #ffb6c1;
+  padding: 24px 20px;
 }
 
 .stamp-badge {
-  display: inline-block;
-  background-color: #e04f4f;
-  color: white;
+  font-size: 1.2rem;
   font-weight: 900;
-  font-size: 1.1rem;
-  padding: 6px 16px;
-  border-radius: 8px;
-  transform: rotate(-3deg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  margin-bottom: 12px;
+  color: #555;
+  margin-bottom: 16px;
 }
 
 .score-display {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #777;
+  margin-bottom: 12px;
 }
 
 .score-val {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 900;
-  color: #2d8b5f;
-  margin: 0 4px;
+  color: #ff3366;
+  margin: 0 8px;
 }
 
 .comment {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #555;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
